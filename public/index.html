@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Snake Game - Home</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="home-page">
+    <h1>Snake Game</h1>
+    <div id="username-container">
+      <label for="username">Enter your name:</label>
+      <input type="text" id="username" placeholder="Enter your name" required>
+      <button id="start-game-btn">Start Game</button>
+    </div>
+    
+    <div id="high-scores">
+      <h2>High Scores</h2>
+      <ul id="scores-list">
+        <!-- High scores will be dynamically added here -->
+      </ul>
+    </div>
+  </div>
+
+  <script>
+    // Handle "Start Game" button click
+    document.getElementById('start-game-btn').addEventListener('click', () => {
+      const username = document.getElementById('username').value.trim();
+      if (username) {
+        window.location.href = `/game?username=${username}`; // Redirect to the game page with the username in the URL
+      } else {
+        alert('Please enter your name.');
+      }
+    });
+
+    // Fetch high scores from MongoDB and display them
+    async function fetchHighScores() {
+      const response = await fetch('/high-scores');
+      const scores = await response.json();
+
+      const scoresList = document.getElementById('scores-list');
+      scoresList.innerHTML = ''; // Clear the existing list
+
+      if (scores.length === 0) {
+        scoresList.innerHTML = '<li>No high scores available.</li>';
+      } else {
+        scores.forEach(score => {
+          const li = document.createElement('li');
+          li.textContent = `${score.username}: ${score.score}`;
+          scoresList.appendChild(li);
+        });
+      }
+    }
+
+    // Fetch high scores on page load
+    window.onload = fetchHighScores;
+  </script>
+</body>
+</html>
